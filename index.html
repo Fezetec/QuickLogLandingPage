@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuickLog – Automatic Time Tracking for Consultants</title>
+  <style>
+    /* COLOR PALETTE BASED ON ALVAR-APPLICATIONS.COM */
+    :root {
+      --bg-hero: #024B56;           /* Deep petrol blue from the top */
+      --bg-main: #FFFFFF;           /* Pure white main background */
+      --bg-light: #024b56;          /* Deep petrol blue for the bottom */
+      --bg-card: #FFFFFF;           /* White card background */
+
+      --accent-cyan: #27B3D2;       /* Turquoise/cyan for primary buttons */
+      --accent-cyan-hover: #1FA2BF;
+      --accent-coral: #F05757;      /* Coral red for active elements/highlights */
+      --accent-coral-hover: #D94545;
+
+      --text-dark: #1E293B;         /* Dark charcoal for headings */
+      --text-muted: #64748B;        /* Gray muted text for light/white backgrounds */
+      --text-on-dark-muted: #CBD5E1; /* Light, muted text for dark backgrounds */
+      --text-light: #FFFFFF;        /* White text for dark background */
+
+      --border-color: #E2E8F0;
+      --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1050px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* TOP HERO WITH DARK BACKGROUND */
+    .hero-wrapper {
+      background-color: var(--bg-hero);
+      color: var(--text-light);
+      position: relative;
+      padding-top: 20px;
+    }
+
+    header {
+      padding: 16px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-light);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-cyan {
+      background-color: var(--accent-cyan);
+      color: white;
+      padding: 12px 26px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-block;
+      box-shadow: 0 4px 12px rgba(39, 179, 210, 0.3);
+    }
+
+    .btn-cyan:hover {
+      background-color: var(--accent-cyan-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--text-light);
+      padding: 12px 26px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-block;
+    }
+
+    .btn-secondary:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* HERO CONTENT */
+    .hero {
+      text-align: center;
+      padding: 60px 0 20px;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background-color: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: var(--text-light);
+      padding: 8px 20px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      cursor: default;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .hero h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--text-on-dark-muted);
+      max-width: 700px;
+      margin: 0 auto 30px;
+    }
+
+    /* WAVE TRANSITION (WAVE SVG) */
+    .wave-divider {
+      width: 100%;
+      overflow: hidden;
+      line-height: 0;
+    }
+
+    .wave-divider svg {
+      position: relative;
+      display: block;
+      width: calc(100% + 1.3px);
+      height: 60px;
+    }
+
+    .wave-divider .shape-fill {
+      fill: var(--bg-main);
+    }
+
+    /* CALCULATOR CARD */
+    .calculator-card {
+      background: var(--bg-card);
+      color: var(--text-dark);
+      border-radius: 16px;
+      padding: 36px;
+      margin: 20px 0 0;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      border: 1px solid var(--border-color);
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+
+    @media (max-width: 768px) {
+      .calc-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 2.1rem; }
+    }
+
+    .control-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .control-group label {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    .slider {
+      width: 100%;
+      height: 8px;
+      border-radius: 5px;
+      background: var(--border-color);
+      outline: none;
+      accent-color: var(--accent-cyan);
+      cursor: pointer;
+    }
+
+    .calculator-assumption {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: -8px;
+    }
+
+    .result-box {
+      background: #FFF5F5;
+      border: 1px solid rgba(240, 87, 87, 0.3);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .result-box .amount {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: var(--accent-coral);
+      margin: 6px 0;
+    }
+
+    /* DEMO SIMULATION */
+    .demo-section {
+      padding: 70px 0 40px;
+      text-align: center;
+    }
+
+    .phone-mockup {
+      width: 320px;
+      height: 400px;
+      background: #0F172A;
+      border-radius: 20px;
+      border: 6px solid #334155;
+      margin: 30px auto;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-shadow: var(--card-shadow);
+    }
+
+    .notification {
+      background: rgba(255, 255, 255, 0.98);
+      color: var(--text-dark);
+      padding: 14px;
+      border-radius: 12px;
+      text-align: left;
+      font-size: 0.85rem;
+      transform: translateY(-240%);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 10px 15px rgba(0,0,0,0.2);
+    }
+
+    .notification.active {
+      transform: translateY(-110%);
+    }
+
+    .notif-title {
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .notif-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .notif-btn {
+      background: transparent;
+      border: none;
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    /* FEATURE CARDS */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin: 50px 0;
+    }
+
+    @media (max-width: 560px) {
+      .features-grid { grid-template-columns: 1fr; }
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+      text-align: left;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent-cyan);
+    }
+
+    .icon-wrapper {
+      width: 48px;
+      height: 48px;
+      background: rgba(39, 179, 210, 0.1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+      color: var(--accent-cyan);
+    }
+
+    .feature-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+      color: var(--text-dark);
+    }
+
+    .feature-card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+    }
+
+    /* PRICING (FRAME AS IN IMAGE) */
+    .pricing-section {
+      padding: 40px 0 80px;
+    }
+
+    .pricing-card {
+      background: var(--bg-card);
+      border: 2px solid var(--accent-coral); /* Highlighted as the "User-friendly" card in the image */
+      border-radius: 16px;
+      max-width: 460px;
+      margin: 0 auto;
+      padding: 40px;
+      text-align: center;
+      box-shadow: 0 15px 30px rgba(240, 87, 87, 0.08);
+    }
+
+    .price {
+      font-size: 3.2rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin: 16px 0;
+    }
+
+    .price span {
+      font-size: 1rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 0;
+      border-top: 1px solid var(--border-color);
+      color: var(--text-on-dark-muted);
+      font-size: 0.85rem;
+      background: var(--bg-light);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP HERO WITH TEAL BACKGROUND -->
+  <div class="hero-wrapper">
+    <div class="container">
+      <header>
+        <a href="#" class="logo">
+          <!-- Alvar-style "A" logo icon -->
+          <svg width="28" height="28" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50 10 L90 90 L70 90 L50 45 L30 90 L10 90 Z" fill="#FFFFFF"/>
+          </svg>
+          QuickLog
+        </a>
+        <a href="https://play.google.com/store/apps/details?id=com.alvarApplications.QuickLog" class="btn-cyan">Try for free</a>
+      </header>
+
+      <section class="hero">
+        <div class="hero-badge">Capture every billable minute</div>
+        <h1>Stop giving away free advice on the phone.</h1>
+        <p>QuickLog automatically catches the calls and meetings you forgot to log — so less of your billable time slips through the cracks.</p>
+
+        <div class="hero-actions">
+          <a href="https://play.google.com/store/apps/details?id=com.alvarApplications.QuickLog" class="btn-cyan">Try for free</a>
+          <a href="#demo" class="btn-secondary">See how it works</a>
+        </div>
+
+        <!-- CALCULATOR CARD -->
+        <div class="calculator-card">
+          <h3 style="margin-bottom: 20px; font-weight: 700;">How much billable time could you be losing?</h3>
+          <div class="calc-grid">
+            <div>
+              <div class="control-group">
+                <label>Unbilled call time per workday: <span id="time-val">15 min</span></label>
+                <input type="range" id="time-slider" class="slider" min="5" max="60" step="5" value="15">
+              </div>
+              <div class="control-group">
+                <label>Your hourly rate: <span id="rate-val">1,200</span></label>
+                <input type="range" id="rate-slider" class="slider" min="500" max="2500" step="50" value="1200">
+              </div>
+              <div class="calculator-assumption">(Assuming 21 working days per month)</div>
+            </div>
+            <div class="result-box">
+              <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Potential monthly revenue</span>
+              <div class="amount" id="result-amount">6,300</div>
+              <span style="font-size: 0.85rem; color: var(--text-muted);">you could be missing</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- WAVE DIVIDER BETWEEN TOP AND BOTTOM -->
+    <div class="wave-divider">
+      <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+        <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118.92,150.3,111.31,220.17,92.83,253.3,84.1,288.1,71.52,321.39,56.44Z" class="shape-fill"></path>
+      </svg>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- INTERACTIVE DEMO -->
+    <section class="demo-section" id="demo">
+      <h2 style="font-size: 2rem; font-weight: 800;">How it works</h2>
+      <p style="color: var(--text-muted); margin-top: 6px;">See how QuickLog reminds you to log an activity when a call or meeting ends.</p>
+
+      <div class="phone-mockup">
+        <div class="notification" id="notif">
+          <div class="notif-title">New activity</div>
+          <div>Do you want QuickLog to log this?</div>
+          <div class="notif-actions">
+            <button class="notif-btn" onclick="logCall()">Yes and add note</button>
+            <button class="notif-btn" onclick="logCall()">Yes</button>
+            <button class="notif-btn" onclick="resetNotif()">No</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-cyan" onclick="triggerSimulation()">Simulate ended activity</button>
+    </section>
+
+    <!-- FEATURE CARDS -->
+    <section class="features-grid">
+      <div class="feature-card">
+        <div class="icon-wrapper">🛡️</div>
+        <h3>Keep work and personal separate</h3>
+        <p>Set your working hours and decide which contacts should be ignored. QuickLog helps keep personal calls out of your work log.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon-wrapper">📅</div>
+        <h3>Automatic meeting tracking</h3>
+        <p>Connect Google Calendar and let QuickLog automatically detect your Google Meet meetings. No manual timers, no extra steps.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon-wrapper">📊</div>
+        <h3>Ready for invoicing</h3>
+        <p>Export daily and monthly summaries to PDF or Excel and use them as documentation when creating invoices.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon-wrapper">🏷️</div>
+        <h3>Organize your work</h3>
+        <p>Add your own tags to calls and meetings to quickly see which customers, projects or types of work your time was spent on.</p>
+      </div>
+    </section>
+
+    <!-- PRICING -->
+    <section class="pricing-section">
+      <div class="pricing-card">
+        <h3 style="font-size: 1.5rem; font-weight: 800;">QuickLog Pro</h3>
+        <p style="color: var(--text-muted); margin-top: 4px;">Everything you need to keep track of billable time</p>
+        <div class="price">1$ <span>/ month</span></div>
+        <ul style="text-align: left; margin: 24px 0; color: var(--text-muted); list-style: none; line-height: 2;">
+          <li>✓ Unlimited call logging</li>
+          <li>✓ Google Meet integration</li>
+          <li>✓ PDF & Excel export</li>
+          <li>✓ Daily invoice summaries</li>
+        </ul>
+        <a href="https://play.google.com/store/apps/details?id=com.alvarApplications.QuickLog" class="btn-cyan" style="width: 100%;">Start your free trial</a>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 12px;">1 month free • Cancel anytime</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 Alvar Applications. All rights reserved. | QuickLog</p>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT FOR INTERACTIVITY -->
+  <script>
+    const timeSlider = document.getElementById('time-slider');
+    const rateSlider = document.getElementById('rate-slider');
+    const timeVal = document.getElementById('time-val');
+    const rateVal = document.getElementById('rate-val');
+    const resultAmount = document.getElementById('result-amount');
+
+    function calculateLoss() {
+      const minsPerDay = parseInt(timeSlider.value);
+      const hourlyRate = parseInt(rateSlider.value);
+
+      timeVal.textContent = minsPerDay + ' min';
+      rateVal.textContent = hourlyRate.toLocaleString('en-US');
+
+      const hoursPerMonth = (minsPerDay / 60) * 21;
+      const monthlyLoss = Math.round(hoursPerMonth * hourlyRate);
+
+      resultAmount.textContent = monthlyLoss.toLocaleString('en-US');
+    }
+
+    timeSlider.addEventListener('input', calculateLoss);
+    rateSlider.addEventListener('input', calculateLoss);
+
+    const notif = document.getElementById('notif');
+
+    function triggerSimulation() {
+      notif.classList.add('active');
+    }
+
+    function logCall() {
+      resetNotif();
+    }
+
+    function resetNotif() {
+      notif.classList.remove('active');
+    }
+  </script>
+</body>
+</html>
